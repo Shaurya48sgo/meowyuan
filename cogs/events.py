@@ -10,6 +10,13 @@ from utils.embeds import *
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self._tasks_started = False
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self._tasks_started:
+            self._tasks_started = True
+            asyncio.create_task(self.vc_earning_loop())
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -166,9 +173,6 @@ class Events(commands.Cog):
                     "INSERT OR IGNORE INTO earned_reactions (guild_id, user_id, message_id) VALUES (?, ?, ?)",
                     (guild.id, member.id, payload.message_id))
                 await db.db.commit()
-
-    async def cog_load(self):
-        asyncio.create_task(self.vc_earning_loop())
 
     async def vc_earning_loop(self):
         await self.bot.wait_until_ready()

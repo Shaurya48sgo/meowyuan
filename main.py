@@ -58,18 +58,12 @@ async def load_cogs():
             print(f"Failed to load {cog}: {e}")
 
 
-async def main():
-    try:
-        await db.connect()
-        await load_cogs()
-        await bot.start(TOKEN)
-    except Exception as e:
-        print(f"FATAL: {e}")
-        import traceback
-        traceback.print_exc()
-    finally:
-        await db.close()
+async def setup():
+    await db.connect()
+    await load_cogs()
+    print("Setup complete. Starting bot...")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(setup())
+    bot.run(TOKEN, reconnect=True)

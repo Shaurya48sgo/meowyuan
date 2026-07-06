@@ -13,6 +13,13 @@ from cogs.owner import ConfirmView, CurrencySelectView
 class Jail(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self._tasks_started = False
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self._tasks_started:
+            self._tasks_started = True
+            asyncio.create_task(self.check_jail_expirations())
 
     async def check_role_order(self, guild, author, target):
         config = await db.get_guild_config(guild.id, "jail_config", {})
@@ -193,9 +200,6 @@ class Jail(commands.Cog):
                 self.format_msg(await self.get_jail_message(ctx.guild.id, "strike3"),
                                target.mention, "", "12 hours"))
             await ctx.send(embed=embed2)
-
-    async def cog_load(self):
-        asyncio.create_task(self.check_jail_expirations())
 
     async def check_jail_expirations(self):
         await self.bot.wait_until_ready()

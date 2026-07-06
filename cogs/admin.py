@@ -10,6 +10,13 @@ from cogs.owner import ConfirmView
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self._tasks_started = False
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self._tasks_started:
+            self._tasks_started = True
+            asyncio.create_task(self.check_temp_roles())
 
     @commands.command(name="easysetup_all")
     @has_spower()
@@ -51,9 +58,6 @@ class Admin(commands.Cog):
             "7. Shop System\n8. Gift System\n9. Wallet Setup\n\n"
             "Type number or **done**.")
         await ctx.send(embed=embed)
-
-    async def cog_load(self):
-        asyncio.create_task(self.check_temp_roles())
 
     async def check_temp_roles(self):
         await self.bot.wait_until_ready()

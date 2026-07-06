@@ -12,9 +12,13 @@ class PlayGIF(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.commands = {}
+        self._tasks_started = False
 
-    async def cog_load(self):
-        asyncio.create_task(self.load_commands())
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self._tasks_started:
+            self._tasks_started = True
+            asyncio.create_task(self.load_commands())
 
     async def load_commands(self):
         await self.bot.wait_until_ready()
