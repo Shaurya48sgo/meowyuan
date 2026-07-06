@@ -3,8 +3,9 @@ from discord.ext import commands
 import time
 import random
 import json
+import asyncio
 from utils.database import db
-from utils.checks import has_spower, has_any_power
+from utils.checks import has_spower, has_any_power, is_owner_or_dev
 from utils.embeds import *
 from cogs.owner import ConfirmView, CurrencySelectView
 
@@ -193,9 +194,8 @@ class Jail(commands.Cog):
                                target.mention, "", "12 hours"))
             await ctx.send(embed=embed2)
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.bot.loop.create_task(self.check_jail_expirations())
+    async def cog_load(self):
+        asyncio.create_task(self.check_jail_expirations())
 
     async def check_jail_expirations(self):
         await self.bot.wait_until_ready()

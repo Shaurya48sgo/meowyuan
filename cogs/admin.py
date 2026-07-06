@@ -53,7 +53,7 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
 
     async def cog_load(self):
-        self.bot.loop.create_task(self.check_temp_roles())
+        asyncio.create_task(self.check_temp_roles())
 
     async def check_temp_roles(self):
         await self.bot.wait_until_ready()

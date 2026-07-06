@@ -32,8 +32,15 @@ async def on_ready():
     try:
         await owner.send("hi")
         print(f"Sent 'hi' to owner: {owner}")
-    except:
-        print(f"Could not DM owner")
+    except Exception as e:
+        print(f"Could not DM owner: {e}")
+
+
+@bot.event
+async def on_error(event, *args, **kwargs):
+    print(f"Error in {event}: {args} {kwargs}")
+    import traceback
+    traceback.print_exc()
 
 
 async def load_cogs():
@@ -52,10 +59,16 @@ async def load_cogs():
 
 
 async def main():
-    async with bot:
+    try:
         await db.connect()
         await load_cogs()
         await bot.start(TOKEN)
+    except Exception as e:
+        print(f"FATAL: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        await db.close()
 
 
 if __name__ == "__main__":

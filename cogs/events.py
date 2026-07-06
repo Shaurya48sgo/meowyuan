@@ -168,7 +168,7 @@ class Events(commands.Cog):
                 await db.db.commit()
 
     async def cog_load(self):
-        self.bot.loop.create_task(self.vc_earning_loop())
+        asyncio.create_task(self.vc_earning_loop())
 
     async def vc_earning_loop(self):
         await self.bot.wait_until_ready()

@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import random
+import asyncio
 from utils.database import db
 from utils.checks import is_owner_or_dev, has_any_power
 from utils.embeds import *
@@ -10,7 +11,10 @@ from utils.embeds import *
 class PlayGIF(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.loop.create_task(self.load_commands())
+        self.commands = {}
+
+    async def cog_load(self):
+        asyncio.create_task(self.load_commands())
 
     async def load_commands(self):
         await self.bot.wait_until_ready()
